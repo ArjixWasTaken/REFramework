@@ -934,52 +934,17 @@ void REFramework::on_direct_input_keys(const std::array<uint8_t, 256>& keys) {
 }
 
 std::filesystem::path REFramework::get_persistent_dir() {
-    auto return_appdata_dir = []() -> std::filesystem::path {
-        char app_data_path[MAX_PATH]{};
-        SHGetSpecialFolderPathA(0, app_data_path, CSIDL_APPDATA, false);
+    char* app_data_path = "C:\\Users\\Arjix\\Videos\\Modding\\Monster Hunter Rise";
 
-        static const auto exe_name = [&]() {
-            const auto result = std::filesystem::path(*utility::get_module_path(utility::get_executable())).stem().string();
-            const auto dir = std::filesystem::path(app_data_path) / "REFramework" / result;
-            std::filesystem::create_directories(dir);
+    static const auto exe_name = [&]() {
+        const auto result = std::filesystem::path(*utility::get_module_path(utility::get_executable())).stem().string();
+        const auto dir = std::filesystem::path(app_data_path) / "REFramework" / result;
+        std::filesystem::create_directories(dir);
 
-            return result;
-        }();
-
-        return std::filesystem::path(app_data_path) / "REFramework" / exe_name;
-    };
-
-    if (s_fallback_appdata) {
-        return return_appdata_dir();
-    }
-
-    if (s_checked_file_permissions) {
-        static const auto result = std::filesystem::path(*utility::get_module_path(utility::get_executable())).parent_path();
         return result;
-    }
+    }();
 
-    // Do some tests on the file creation/writing permissions of the current directory
-    // If we can't write to the current directory, we fallback to the appdata folder
-    try {
-        const auto dir = std::filesystem::path(*utility::get_module_path(utility::get_executable())).parent_path();
-        const auto test_file = dir / "test.txt";
-        std::ofstream test_stream{test_file};
-        test_stream << "test";
-        test_stream.close();
-
-        std::filesystem::create_directories(dir / "test_dir");
-        std::filesystem::remove(test_file);
-        std::filesystem::remove(dir / "test_dir");
-
-        s_checked_file_permissions = true;
-        s_fallback_appdata = false;
-    } catch(...) {
-        s_fallback_appdata = true;
-        s_checked_file_permissions = true;
-        return return_appdata_dir();
-    }
-    
-    return std::filesystem::path(*utility::get_module_path(utility::get_executable())).parent_path();
+    return std::filesystem::path(app_data_path) / "REFramework" / exe_name;
 }
 
 void REFramework::save_config() {
