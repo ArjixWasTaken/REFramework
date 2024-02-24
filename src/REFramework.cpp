@@ -934,7 +934,7 @@ void REFramework::on_direct_input_keys(const std::array<uint8_t, 256>& keys) {
 }
 
 std::filesystem::path REFramework::get_persistent_dir() {
-    char* app_data_path = "C:\\Users\\Arjix\\Videos\\Modding\\Monster Hunter Rise";
+    char app_data_path[50] = "C:\\Users\\Arjix\\Videos\\Modding\\Monster Hunter Rise";
 
     static const auto exe_name = [&]() {
         const auto result = std::filesystem::path(*utility::get_module_path(utility::get_executable())).stem().string();
